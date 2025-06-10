@@ -9,3 +9,39 @@ Concatena una seconda chiamata che aggiunge una proprietà user che contiene i d
 recuperati dalla chiamata https://dummyjson.com/users/{post.userId}.
  */
 
+
+const getPostTitle = (id) => {
+    const promessa = new Promise((resolve, reject) => {
+        fetch(`https://dummyjson.com/posts/${id}`)
+            .then(response => response.json())
+            .then(data => resolve(data.title))
+            .catch(reject)
+    })
+    return promessa
+}
+
+getPostTitle(1)
+    .then(data => console.log(data))
+    .catch(error => console.error(error))
+
+const getPost = (id) => {
+    const promessa = new Promise((resolve, reject) => {
+        fetch(`https://dummyjson.com/posts/${id}`)
+            .then(response => response.json())
+            .then(post => {
+                fetch(`https://dummyjson.com/users/${post.userId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        post.author = data
+                        resolve(post)
+                    })
+                    .catch(reject)
+            })
+            .catch(reject)
+    })
+    return promessa
+}
+
+getPost(1)
+    .then(data => console.log(data))
+    .catch(error => console.error(error))
